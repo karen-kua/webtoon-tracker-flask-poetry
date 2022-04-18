@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "webtoon-tracker-flask-poetry"
+version = "0.1.0"
+description = ""
+authors = ["azukimochi <karen.kuak@gmail.com>"]
+
+[tool.poetry.scripts]
+test = "scripts:test"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Flask = "^2.0.2"
+pymongo = {extras = ["snappy", "gssapi", "srv", "tls"], version = "^4.0"}
+Flask-PyMongo = "^2.3.0"
+dnspython = "^2.1.0"
+Flask-Cors = "^3.0.10"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
