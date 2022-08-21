@@ -4,11 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchWebtoons } from '../action-creators/webtoons';
 import Modal from '../components/Modal';
 import Table from '../components/Table';
+import usePrevState from '../hooks/usePrevState';
 
 const Home = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const webtoons = useSelector(state => state.webtoons.webtoons);
     const error = useSelector(state => state.webtoons.error);
+    const isAddingWebtoon = useSelector(state => state.webtoons.isAddingWebtoon);
+    const prevIsAddingWebtoon = usePrevState(isAddingWebtoon);
     const dispatch = useDispatch();
     const headingAndCellPairs = [
         ['Title', 'title'],
@@ -19,16 +22,22 @@ const Home = () => {
     ]
 
     useEffect(() => {
-        console.log('Karen is here')
         dispatch(fetchWebtoons())
     }, [])
 
-    const toggleModal = useCallback(() => {
+    useEffect(() => {
+        if (prevIsAddingWebtoon && !isAddingWebtoon && !error) {
+            toggleModal();
+        }
+    }, [isAddingWebtoon])
+
+    const toggleModal = () => {
         setIsModalOpen(!isModalOpen)
-    }, [isModalOpen])
+    }
 
     console.log('Karen webtoons: ', webtoons)
-    console.log('Karen isModalOpen: ', isModalOpen)
+    console.log('Karen isModalOpen: ', isModalOpen),
+    console.log('Karen prevIsAddingWebtoon: ', prevIsAddingWebtoon, isAddingWebtoon, error);
 
     return (
         <div>

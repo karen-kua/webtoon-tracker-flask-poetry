@@ -1,4 +1,6 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, Fragment, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addOneWebtoon } from '../../action-creators/webtoons';
 import Checkbox from '../Checkbox';
 import ListTextInputs from '../ListTextInputs';
 import TextInput from '../TextInput';
@@ -23,12 +25,40 @@ const daysOfWeek = [
     'sunday'
 ];
 
+const checkFormValues = formValues => {
+    let errMsg = '';
+    const copyOfValues = {...formValues};
+    const keyAndValues = Object.entries(copyOfValues);
+    keyAndValues.map(([key, value]) => {
+        if (typeof value === 'string' && value.length === 0) {
+            errMsg = `${key} is empty!`;
+        } else if (typeof value === 'undefined') {
+            errMsg = `${key} is undefined!`;
+        } else if (Array.isArray(value) && value.length === 0) {
+            errMsg = `${key} is empty!`;
+        }
+    })
+    return [errMsg ? false: true, errMsg]
+}
+
 const Modal = ({ header, closeModal }) => {
     const [formValues, setFormValues] = useState(initialForm)
+    const [formError, setFormError] = useState('');
+    const dataError = useSelector(state => state.webtoons.error);
+    const dispatch = useDispatch();
+
 
     const handleSubmit = e => {
         e.preventDefault();
-        console.log('Karen submitted values: ', formValues)
+        console.log('Karen submitted values: ', formValues);
+        const [isFormValid, errMsg] = checkFormValues(formValues);
+        console.log('Karen isFormValid: ', isFormValid);
+        console.log('Karen errMsg: ', errMsg);
+        if (isFormValid) {
+            dispatch(addOneWebtoon(formValues))
+        } else {
+            setFormError(errMsg)
+        }
     }
 
     const handleOnTextChange = e => {
@@ -43,8 +73,6 @@ const Modal = ({ header, closeModal }) => {
 
     const handleOnListTextChange = (e, index) => {
         e.preventDefault();
-        console.log('Karen e: ', e);
-        console.log('Karen index: ', index);
         const { name, value } = e.target;
         const field = name.split('_')[0]
         const updatedList = [...formValues[field]]
@@ -57,9 +85,7 @@ const Modal = ({ header, closeModal }) => {
     }
 
     const deleteEntry = (field, index) => {
-        console.log('Karen index: ', index, field)
         const updatedList = [...formValues[field]]
-        console.log('Karen updatedList: ', updatedList);
         updatedList.splice(index, 1)
         setFormValues({
             ...formValues,
@@ -68,7 +94,6 @@ const Modal = ({ header, closeModal }) => {
     }
 
     const addEntry = (field) => {
-        console.log('Karen field: ', field)
         const updatedList = [...formValues[field], '']
         setFormValues({
             ...formValues,
@@ -99,7 +124,6 @@ const Modal = ({ header, closeModal }) => {
         })
     }
     console.log('Karen formValues: ', formValues);
-
 
 return (
     <div id="modalOverlay">
@@ -165,6 +189,8 @@ return (
             onChange={toggleCheckbox}
             />
             <button onSubmit={handleSubmit}>Submit</button>
+            {dataError && <div>An error occurred: {dataError}</div>}
+            {formError && <div>An error occurred: {formError}</div>}
         </form>
             </div>
         </div>

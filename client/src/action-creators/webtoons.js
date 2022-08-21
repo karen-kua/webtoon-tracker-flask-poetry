@@ -10,15 +10,38 @@ export const setError = error => ({
     error
 })
 
+export const setIsAddingOneWebtoon = status => ({
+    type: 'SET_IS_ADDING_WEBTOON',
+    status
+})
+
 export const fetchWebtoons = () => {
-    console.log('Karen is here')
     return async dispatch => {
         try {
+            dispatch(setError(''));
             const webtoons = await Webtoons.fetchAllWebtoons();
-            console.log('Karen fetched: ', webtoons)
             dispatch(setWebtoons(webtoons.data))
         } catch(error) {
             dispatch(setError(error.message))
+        }
+    }
+}
+
+export const addOneWebtoon = (reqBody) => {
+    console.log('Karen is here')
+    return async dispatch => {
+        try {
+            dispatch(setIsAddingOneWebtoon(true));
+            dispatch(setError(''));
+            const res = await Webtoons.addOneWebtoon(reqBody);
+            console.log('Karen res: ', res);
+            dispatch(fetchWebtoons())
+            dispatch(setIsAddingOneWebtoon(false));
+        } catch(error) {
+            console.log('Karen error: ', error)
+            const { response: { data: { Error: errMsg }}} = error;
+            dispatch(setError(errMsg))
+            dispatch(setIsAddingOneWebtoon(false));
         }
     }
 }
