@@ -9,6 +9,7 @@ module.exports = {
         filename: 'bundle.js'
     },
     mode: "development",
+    devtool: 'eval',
     devServer: {
       devMiddleware: {
         writeToDisk: true

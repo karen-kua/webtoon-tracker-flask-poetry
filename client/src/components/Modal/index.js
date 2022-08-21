@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, Fragment } from 'react';
 import Checkbox from '../Checkbox';
 import ListTextInputs from '../ListTextInputs';
 import TextInput from '../TextInput';
@@ -75,6 +75,29 @@ const Modal = ({ header, closeModal }) => {
             [field]: updatedList
         });
     };
+
+    const toggleDaysOfRelease = (e, index, field) => {
+        const { value, checked } = e.target;
+        const updatedList = [...formValues[field]];
+        if (checked) {
+            updatedList.push(value)
+        } else {
+            updatedList.splice(index, 1);
+        }
+        setFormValues({
+            ...formValues,
+            [field]: updatedList
+
+        })
+    }
+
+    const toggleCheckbox = e => {
+        const { value, checked } = e.target;
+        setFormValues({
+            ...formValues,
+            [value]: checked
+        })
+    }
     console.log('Karen formValues: ', formValues);
 
 
@@ -112,22 +135,35 @@ return (
             onDelete={deleteEntry}
             onAdd={addEntry}
             />
+            <div>Days of Release</div>
             {daysOfWeek.map((day, index) => {
                 return(
-                <>
+                <Fragment key={`${day}_${index}`}>
                 <Checkbox
-                key={`${day}_${index}`}
                 name={day}
                 label={day}
-                day={day}
                 value={day}
-                checked={false}
-                onChange={()=>console.log('Karen is checking')}
+                checked={formValues.daysOfRelease.includes(day)}
+                onChange={e => toggleDaysOfRelease(e, index, 'daysOfRelease')}
                 />
-                </>
+                </Fragment>
                 )
             })
             }
+            <Checkbox
+            name="completed"
+            label="Completed"
+            value="completed"
+            checked={formValues.completed}
+            onChange={toggleCheckbox}
+            />
+            <Checkbox
+            name="dropped"
+            label="Dropped"
+            value="dropped"
+            checked={formValues.dropped}
+            onChange={toggleCheckbox}
+            />
             <button onSubmit={handleSubmit}>Submit</button>
         </form>
             </div>

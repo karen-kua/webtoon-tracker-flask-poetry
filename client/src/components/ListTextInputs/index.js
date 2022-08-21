@@ -9,9 +9,8 @@ const ListTextInputs = ({list, field, title, onChange, onDelete, onAdd}) => {
         const name = `${field}_${index+1}`;
         const label = `${field} #${index+1}`;
         return (
-            <div className="form__list">
+            <div className="form__list" key={name}>
             <TextInput
-            key={name}
             label={label}
             name={name}
             value={item}
